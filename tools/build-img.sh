@@ -1,16 +1,22 @@
 #!/bin/bash
 # Builds a 12GB raw USB image for PS4 Linux (run as root, e.g. inside WSL).
-#   p1: 512MB FAT32 with bzImage + initramfs.cpio.gz
+#   p1: 512MB FAT32 with initramfs.cpio.gz (NO file named bzImage by default)
 #   p2: ext4, label "psxitarch", with the Arch rootfs extracted
 #
+# The PS4 loader prefers a bzImage on the USB over /data/linux/boot/bzImage.
+# Leaving bzImage off the USB lets one USB work on several consoles (Belize and
+# Baikal), each booting its own kernel from /data/linux/boot/bzImage.
+#
 # Usage:
-#   sudo bash build-img.sh <psxitarch.tar.xz> <bzImage> <initramfs.cpio.gz> <output.img>
+#   sudo bash build-img.sh <psxitarch.tar.xz> <initramfs.cpio.gz> <output.img> [spare-kernel ...]
+# Optional spare kernels are copied to p1 as "bzImage.<name of parent folder>"
+# (e.g. boot/belize/bzImage -> bzImage.belize), so the loader ignores them.
 # Example (WSL):
-#   sudo bash build-img.sh /mnt/d/ps4/psxitarch.tar.xz boot/bzImage boot/initramfs.cpio.gz /mnt/d/ps4/psxitarch-usb.img
+#   sudo bash build-img.sh /mnt/d/ps4/psxitarch.tar.xz boot/initramfs.cpio.gz /mnt/d/ps4/psxitarch-usb.img
 set -euo pipefail
-[ $# -eq 4 ] || { echo "usage: $0 <psxitarch.tar.xz> <bzImage> <initramfs.cpio.gz> <output.img>"; exit 1; }
-TAR=$1; BZ=$2; IRFS=$3; OUT=$4
-for f in "$TAR" "$BZ" "$IRFS"; do [ -f "$f" ] || { echo "missing: $f"; exit 1; }; done
+[ $# -ge 3 ] || { echo "usage: $0 <psxitarch.tar.xz> <initramfs.cpio.gz> <output.img> [spare-kernel ...]"; exit 1; }
+TAR=$1; IRFS=$2; OUT=$3; shift 3; SPARE=("$@")
+for f in "$TAR" "$IRFS" "${SPARE[@]}"; do [ -f "$f" ] || { echo "missing: $f"; exit 1; }; done
 IMG=/root/psxitarch-usb.img   # build on the Linux filesystem (much faster than /mnt/c)
 rm -f "$IMG"; truncate -s 12G "$IMG"
 printf 'label: dos\nstart=2048, size=512MiB, type=c\ntype=83\n' | sfdisk "$IMG"
@@ -24,8 +30,8 @@ tar -xJpf "$TAR" -C /mnt/psx --numeric-owner
 for d in dev media mnt proc run sys tmp var/cache var/log var/tmp; do mkdir -p "/mnt/psx/$d"; done
 chmod 1777 /mnt/psx/tmp /mnt/psx/var/tmp
 mount "${L}p1" /mnt/psxboot
-cp "$BZ" /mnt/psxboot/bzImage
 cp "$IRFS" /mnt/psxboot/initramfs.cpio.gz
+for k in "${SPARE[@]}"; do cp "$k" "/mnt/psxboot/bzImage.$(basename "$(dirname "$(readlink -f "$k")")")"; done
 sync; ls -l /mnt/psxboot; df -h /mnt/psx
 umount /mnt/psxboot /mnt/psx
 e2fsck -fn "${L}p2" | tail -2
