@@ -1,3 +1,5 @@
+<p align="center"><img src="images/banner.jpg" alt="PS4 Linux banner" width="100%"></p>
+
 # PS4 Linux - Arch KDE on a jailbroken PS4
 
 A short, tested guide for running Linux (Arch Linux with KDE Plasma) on a jailbroken PS4 from a USB drive.
@@ -82,7 +84,8 @@ Do **not** use kernel 6.15.4 on the tested Pro: it gave a blue light and no HDMI
 | `boot/belize/kernel-7.1.7-Strawberry-General.config` | The kernel config from the same release |
 | `boot/baikal/bzImage` | Kernel 7.0.8 Strawberry FullLTO Baikal, unmodified from the mirror linked by the PS4 Linux Tutorial |
 | `boot/initramfs.cpio.gz` | DionKill better-initramfs, "External HDD" variant, unmodified - shared by both kernels |
-| `payload/linux-1024mb.elf` | Linux loader payload, 1GB VRAM (ps4-linux-loader v25.1) - works on Belize and Baikal |
+| `payload/linux-*mb.elf` | Linux loader payloads, 32MB to 4096MB VRAM (ps4-linux-loader v25.1) - work on Belize and Baikal, see [Payloads](#payloads) |
+| `images/banner.jpg` | Banner image |
 | `tools/build-img.sh` | Builds the 12GB USB image (Linux or WSL, run as root) |
 | `tools/write-img.ps1` | Writes the image raw to a USB drive on Windows |
 
@@ -92,8 +95,37 @@ SHA-256:
 072113898347932c34888cfdc7556953ee27233c0727cc45f419a57119242480  boot/belize/bzImage
 46c835f762e7b0b5400ea762b8daa1bcec638a1b769c7ec0905137bc565b1ba8  boot/baikal/bzImage
 3f373bd6c469e490eaf4e5cf4d2e8ed77cf7bb91449b6a18da6a6529d479169b  boot/initramfs.cpio.gz
+cb393c938898f0e1e381d673b7eb4251c87f5176d45da3b4a97719bc2f6f2d9f  payload/linux-32mb.elf
+e655932de5c864bc77f620ac2ffaabfa7e3bbc6d3e9e4ae6cad7561b0a03eb0e  payload/linux-64mb.elf
+ba415598d9235b91ba9dde8871dbd49d0bee889ceb07646d9002106a70c241ea  payload/linux-128mb.elf
+bef32f64b560e7541f094dd89c8d012256368ec6d89c880df2547ef2a306a4f6  payload/linux-256mb.elf
+7aff2eb1edb111d1e2db846b26c734ffeab4db343998d99f05e4be7d43c8b94d  payload/linux-512mb.elf
 623c3b68592437b612ede22a4fc1a6f1eef6b17c4b16a1270100ece04cb3c98f  payload/linux-1024mb.elf
+efb9bb027543a829b5f14d5f122a91fddbf8e04488e754607862421c36563a8a  payload/linux-2048mb.elf
+e759edf99461f3eec62d3d7aef7fc2e511d736becfa66534340a133e8f2101ea  payload/linux-3072mb.elf
+0d03cf3f5460985759a2eec29df0b4ae7b1c7e5450c04df99738e911e035a8db  payload/linux-4096mb.elf
 ```
+
+## Payloads
+
+All payloads are the same loader, only the VRAM size differs. VRAM is taken from system RAM (the PS4 has 8GB shared), so more VRAM means less RAM for Linux.
+
+| File | VRAM | Use case |
+|---|---|---|
+| `linux-32mb.elf` | 32MB | Headless / server only |
+| `linux-64mb.elf` | 64MB | Headless / server only |
+| `linux-128mb.elf` | 128MB | Headless / server only |
+| `linux-256mb.elf` | 256MB | Headless / server only |
+| `linux-512mb.elf` | 512MB | Headless / server only |
+| `linux-1024mb.elf` | 1GB | **Recommended for KDE.** Tested on the Pro and the Slim. Use it for the first boot. |
+| `linux-2048mb.elf` | 2GB | More graphics memory for games and desktop effects |
+| `linux-3072mb.elf` | 3GB | Even more graphics memory (not tested here) |
+| `linux-4096mb.elf` | 4GB | Tested working on the Pro (FW 13.52). For heavy games or emulators. Leaves only about 4GB system RAM. |
+
+Notes:
+
+- A `vram.txt` file (a number in MB, for example `2048`) on the USB or in `/data/linux/boot/` overrides the payload size (per the ps4-linux-loader README). Delete it if you want the payload size to be used.
+- Sizes below 1GB are meant for headless servers. The loader README says not to use them for gaming or a heavy desktop, and the PS4 Linux Tutorial notes 32MB and 64MB can cause display issues.
 
 The distro is **not** included (about 2GB). Download it from the official release (see step 1).
 
