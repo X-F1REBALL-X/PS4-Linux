@@ -284,6 +284,17 @@ sudo nmcli con modify "SSID" wifi.cloned-mac-address permanent wifi.powersave 2
   2. Plug in the USB drive.
   3. Send `linux-1024mb.elf` again (step 5).
 
+## Troubleshooting
+
+- **Linux does not start after the jailbreak (black screen or white light):** this is normal and happens often. Do a full power off (hold the power button), wait a few seconds, jailbreak again and retry. The 2nd or 3rd try usually works.
+- **Best routine:** plug the USB in before powering on the console. Send the ELF right after the jailbreak, without opening any games or apps first. On a black screen, wait 1-2 minutes before giving up.
+- **Rescue shell with `mounting LABEL=psxitarch failed`:** the USB was not connected or not detected. Plug it in and reboot the console (resume-boot does not help).
+- **Sleep / suspend is not supported:** disable it in KDE System Settings - Power Management, or run:
+
+```bash
+sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+```
+
 ## Licenses and sources
 
 - **Kernels**: Linux is licensed under GPL-2.0. Both kernels are unmodified binaries.
