@@ -1,0 +1,5 @@
+PS4-Linux - notices
+
+Guide, scripts and image setup: X-F1REBALL-X. Licensed under the GNU General Public License v3.0 (see LICENSE).
+
+The Linux kernels are licensed under the GNU General Public License v2.0. The loader payloads, initramfs and the Arch Linux image were made by other people and keep their original licenses.
