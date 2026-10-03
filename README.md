@@ -2,6 +2,8 @@
 
 Run Linux (Arch Linux with KDE Plasma) on a jailbroken PS4 from a USB drive. Tested setup, ready-to-use files.
 
+This file contains the latest Linux update, dated 29/09/2026.
+
 ## Screenshot
 
 <p align="center"><img src="images/desktop.jpg" alt="KDE Plasma desktop running on PS4" width="100%"></p>
