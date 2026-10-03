@@ -25,138 +25,126 @@ Both use the same payload (`linux-1024mb.elf`), initramfs and USB drive. The loa
 
 - The model number alone does not decide it: Slim (CUH-2xxx) and Pro (CUH-7xxx) can be Belize or Baikal, depending on the motherboard. Fat CUH-10xx/11xx are Aeolia, CUH-12xx and Pro CUH-70xx are Belize.
 - Aeolia (PS4 Fat) should use the Belize kernel but is untested. Some Fat models have Wi-Fi/Bluetooth chips that may not work.
-- Power LED check: **blue** means Linux is running on the console. If the light stays **white** for more than about 30 seconds, Linux did not boot — try the other kernel (Belize ↔ Baikal).
+- Easiest check: if the Belize kernel gets a white light every time, use the Baikal kernel.
 - On the console, the kernel must always be named `/data/linux/boot/bzImage`.
 - Do not put a file named `bzImage` on the USB. The loader prefers a USB kernel over `/data/linux/boot/`, so leave it off and one USB works on every console.
 
 ## Download
 
-Get all files from [Releases](https://gitlab.com/X-F1REBALL-X/PS4-Linux/-/releases/permalink/latest):
+Get everything from [Releases](../../releases/latest).
 
-- `bzImage-belize-7.1.7`, `bzImage-baikal-7.0.8` - kernels
-- `initramfs.cpio.gz` - initramfs (shared)
-- `linux-*mb.elf` - payloads
-- `psxitarch-usb.img.xz.part1`, `psxitarch-usb.img.xz.part2` - ready-made Arch Linux KDE USB image (customized), xz-compressed and split in 2 parts. *Not attached to the current release yet - use **Build it yourself** below in the meantime.*
-- `build-img.sh`, `write-img.ps1` - USB image tools
-- `SHA256SUMS` - checksums
+| File | What it is |
+|---|---|
+| `psxitarch.tar.xz` | The Linux system. One file, about 2.8GB. |
+| `kernel/bzImage-belize-7.1.7` | Kernel for Belize consoles. |
+| `kernel/bzImage-baikal-7.0.8` | Kernel for Baikal consoles. |
+| `kernel/initramfs.cpio.gz` | The small boot file. It finds Linux on the USB and starts it. |
+| `payload/linux-1024mb.elf` | The file you send to the PS4 to boot Linux. Use this one. |
+| `tools/build-img.sh` | Turns the Linux file into a USB image. |
+| `tools/write-img.ps1` | Writes that image onto the USB on Windows. |
 
-**Check a download:** compare its hash with the one in `SHA256SUMS`. They must match exactly.
+Do not put a file named `bzImage` on the USB. The PS4 would boot that file instead of the kernel that matches the console. One USB then works for both Belize and Baikal.
 
-- Windows (PowerShell): `Get-FileHash .\linux-1024mb.elf`
-- Linux: `sha256sum -c SHA256SUMS --ignore-missing`
+## Which USB
 
-## Payloads
+- Best: a 32GB USB 3.0 stick. Fast, and there is room left after Linux is installed.
+- Minimum: 16GB. It fits, but there is almost no free space until you grow the partition.
+- Slower USB 2.0 sticks work, but boot and the desktop feel slow.
 
-| File | VRAM | Use |
-|---|---|---|
-| `linux-32mb.elf` to `linux-512mb.elf` | 32-512MB | Headless / server only |
-| `linux-1024mb.elf` | 1GB | **Recommended for KDE.** Tested on Pro and Slim |
-| `linux-2048mb.elf` | 2GB | More graphics memory |
-| `linux-3072mb.elf` | 3GB | Not tested |
-| `linux-4096mb.elf` | 4GB | Tested on Pro (FW 13.52). Heavy games / emulators. Leaves about 4GB RAM |
+Burning erases the whole stick.
 
-## Installation
+## Install
 
-### 1. Prepare the USB drive (16GB or more)
+### 1. Make the USB image
 
-- **Ready-made image:** download `psxitarch-usb.img.xz.part1` and `psxitarch-usb.img.xz.part2` from [Releases](https://gitlab.com/X-F1REBALL-X/PS4-Linux/-/releases/permalink/latest). It is an Arch Linux KDE USB image (customized) that logs in straight to the KDE desktop. It fits any USB drive of 16GB or more (8.9GB uncompressed). USB 3.0 is recommended for speed. Join the two parts into one file, `psxitarch-usb.img.xz`.
+Download `psxitarch.tar.xz`, `kernel/initramfs.cpio.gz`, and `tools/build-img.sh`. On Linux or Windows WSL:
 
-On Windows:
+```bash
+sudo bash tools/build-img.sh psxitarch.tar.xz kernel/initramfs.cpio.gz psxitarch-usb.img
+```
+
+You get `psxitarch-usb.img`, about 12GB. That is the file you burn.
+
+### 2. Burn it
+
+**Windows**
+
+1. Open PowerShell as Administrator.
+2. Run `Get-Disk` and note the number of the USB stick. Do not pick your PC disk.
+3. Run:
 
 ```powershell
-cmd /c copy /b psxitarch-usb.img.xz.part1 + psxitarch-usb.img.xz.part2 psxitarch-usb.img.xz
+powershell -ExecutionPolicy Bypass -File .\tools\write-img.ps1 -ImagePath .\psxitarch-usb.img -DiskNumber 1
 ```
 
-On Linux: `cat psxitarch-usb.img.xz.part1 psxitarch-usb.img.xz.part2 > psxitarch-usb.img.xz`
+Change `1` to your USB number. If Windows asks to format the stick, click Cancel.
 
-Then go to step 2.
+You can also burn `psxitarch-usb.img` with balenaEtcher, or with Rufus in DD mode.
 
-- **Build it yourself:** get Erkkola's Arch KDE v1.1.1 rootfs `psxitarch.tar.xz`, then in WSL or Linux:
+**Linux**
+
+Find the stick with `lsblk`. Replace `sdX` with that name, not a partition like `sdX1`:
 
 ```bash
-sudo bash build-img.sh psxitarch.tar.xz initramfs.cpio.gz psxitarch-usb.img
+sudo dd if=psxitarch-usb.img of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
-This creates a 12GB image: p1 FAT32 with `initramfs.cpio.gz`, p2 ext4 labeled `psxitarch` with Arch KDE.
+### 3. Use the whole stick
 
-### 2. Write the image to the USB
-
-Writing the image erases everything on the USB drive.
-
-**Windows:** in PowerShell as Administrator, find the USB disk number with `Get-Disk`, then:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\write-img.ps1 -ImagePath .\psxitarch-usb.img.xz -DiskNumber 1
-```
-
-`write-img.ps1` writes the compressed `psxitarch-usb.img.xz` directly (7-Zip must be installed) or a plain `.img` (for example one you built yourself). Alternatively, write `psxitarch-usb.img.xz` directly with balenaEtcher, or extract the `.img` with 7-Zip and write it with Rufus (DD mode).
-
-The script refuses non-USB or system disks and asks you to confirm. If Windows offers to format the drive, click Cancel.
-
-**Linux:** find the USB with `lsblk` (replace `sdX` below), then:
-
-```bash
-xz -dc psxitarch-usb.img.xz | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync
-```
-
-After writing, the Linux partition is only as big as the image (about 8GB). To use the whole drive, expand it as described in step 5.
-
-### 3. Copy the kernel and initramfs to the PS4
-
-1. Jailbreak the PS4 with GoldHEN.
-2. Connect with FTP to the PS4 IP, port `2121` (binary mode).
-3. Create `/data/linux/boot/`.
-4. Upload the kernel for your southbridge as `/data/linux/boot/bzImage`.
-5. Upload `initramfs.cpio.gz` to `/data/linux/boot/`.
-
-### 4. Boot Linux
-
-1. Plug the USB into the PS4.
-2. Jailbreak and start **GoldHEN**. Enable **BinLoader / PayLoader** on port **9090**.
-3. Send `linux-1024mb.elf` (or another size from [Releases](https://gitlab.com/X-F1REBALL-X/PS4-Linux/-/releases/permalink/latest)) to that listener.
-
-**Easiest from the PS4 browser:** open [ArabPixel WebKitty](http://webkitty.arabpixel.net/) over **HTTP**, pick a **Linux Loader** (for example 1GB), and send. GoldHEN PayLoader must already be running. Do not use GitLab Pages HTTPS for this — the browser cannot reach `http://127.0.0.1:9090` from HTTPS.
-
-**From a PC (same LAN):**
-
-```bash
-nc -q 1 <PS4-IP> 9090 < linux-1024mb.elf
-```
-
-On Windows, send the ELF with a raw TCP client to `<PS4-IP>:9090`.
-
-4. Watch the console power LED:
-   - **Blue** = Linux booted successfully (this is the only good sign that Linux is running on the console).
-   - **White** for more than about **30 seconds** = Linux did not boot. Do a full power off and retry (or try the other kernel).
-5. When it works, it logs in automatically and goes straight to the KDE desktop.
-
-### 5. Expand the root partition
-
-Check the names with `lsblk` (the USB was `sdb` here), then:
+The burned Linux partition is only about 12GB. On a 32GB or larger stick, grow it so the free space is usable. Check the name with `lsblk` (here it was `sdb`):
 
 ```bash
 sudo parted /dev/sdb resizepart 2 100%
 sudo resize2fs /dev/sdb2
 ```
 
-Alternatively, grow partition 2 to the end of the drive with a partition editor such as GParted on another Linux PC.
+### 4. Put the kernel on the PS4
 
-### 6. After installation
+The kernel stays on the console, not on the USB.
 
-- **DualShock 4:** works over USB. Over Bluetooth it must be paired again on every boot.
-- **Network:** Ethernet works out of the box. Wi-Fi is still in testing - prefer 2.4GHz. If it is stuck on "Configuring interface":
+1. Jailbreak with GoldHEN.
+2. FTP to the PS4, port `2121`.
+3. Create the folder `/data/linux/boot/`.
+4. Upload the kernel for your console and name it `/data/linux/boot/bzImage`.
+5. Upload `kernel/initramfs.cpio.gz` to `/data/linux/boot/initramfs.cpio.gz`.
+
+Belize uses `kernel/bzImage-belize-7.1.7`. Baikal uses `kernel/bzImage-baikal-7.0.8`. If a Belize kernel only gives a white light, use the Baikal one.
+
+### 5. Boot
+
+1. Plug the USB into the PS4 before you turn it on.
+2. Jailbreak.
+3. Send `payload/linux-1024mb.elf` to the loader:
 
 ```bash
-sudo nmcli con modify "SSID" wifi.cloned-mac-address permanent wifi.powersave 2
+nc -q 1 <PS4-IP> 9020 < payload/linux-1024mb.elf
 ```
 
-- **Back to Linux after a reboot:** rebooting returns to the PS4 system. Jailbreak, plug in the USB and send the payload again.
+If port 9020 does not answer, try 9090. A black screen for a minute or two is normal. It then logs in to the KDE desktop.
+
+After a reboot you are back on the PS4. Jailbreak and send the payload again. The USB can stay plugged in.
+
+## Payloads
+
+| File | VRAM | Use |
+|---|---|---|
+| `linux-32mb.elf` to `linux-512mb.elf` | 32-512MB | No desktop. Server only. |
+| `linux-1024mb.elf` | 1GB | Use this for the desktop. Tested on Pro and Slim. |
+| `linux-2048mb.elf` | 2GB | More graphics memory. |
+| `linux-3072mb.elf` | 3GB | Not tested. |
+| `linux-4096mb.elf` | 4GB | Tested on Pro (FW 13.52). Heavy games and emulators. Leaves about 4GB RAM. |
+
+## After it boots
+
+- The controller works on a USB cable. Bluetooth has to be paired again after every boot.
+- Ethernet works. Wi-Fi is still being tested. Prefer 2.4GHz.
+- Sleep is turned off. Suspending the console breaks this Linux.
 
 ## Troubleshooting
 
-- **Power LED:** **blue** = Linux is up on the console. If the light stays **white** for more than about **30 seconds**, Linux did not boot.
-- **White light / black screen (failed boot):** do a full power off (hold the power button), wait a few seconds, jailbreak again and retry. The 2nd or 3rd try usually works. If it stays white every time, try the other kernel (Belize ↔ Baikal).
-- **Best routine:** plug the USB in before powering on. Send the ELF right after the jailbreak, without opening games or apps.
+- **Black screen or white light:** Linux does not always start after the jailbreak. This is normal. Do a full power off (hold the power button), wait a few seconds, jailbreak again and retry. The 2nd or 3rd try usually works.
+- **Best routine:** plug the USB in before powering on. Send the ELF right after the jailbreak, without opening games or apps. Wait 1-2 minutes on a black screen before giving up.
+- **White light every time:** probably the wrong kernel for your southbridge - try the other one.
 - **Rescue shell with `mounting LABEL=psxitarch failed`:** the USB was not connected or detected. Plug it in and reboot (resume-boot does not help).
 - **Sleep / suspend is not supported:** already disabled in the ready-made USB image (suspend, screen dimming and screen off are turned off). If you build your own image, disable it in KDE Power Management, or run:
 
