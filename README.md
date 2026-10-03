@@ -33,17 +33,14 @@ Both use the same payload (`linux-1024mb.elf`), initramfs and USB drive. The loa
 
 ## Download
 
-Get everything from [Releases](../../releases/latest).
+Get everything from [Releases](../../releases/latest). Unzip `kernel.zip`, `payloads.zip`, and `tools.zip` first. Leave `psxitarch.tar.xz` as its own file.
 
 | File | What it is |
 |---|---|
-| `psxitarch.tar.xz` | The Linux system. One file, about 2.8GB. |
-| `kernel/bzImage-belize-7.1.7` | Kernel for Belize consoles. |
-| `kernel/bzImage-baikal-7.0.8` | Kernel for Baikal consoles. |
-| `kernel/initramfs.cpio.gz` | The small boot file. It finds Linux on the USB and starts it. |
-| `payload/linux-1024mb.elf` | The file you send to the PS4 to boot Linux. Use this one. |
-| `tools/build-img.sh` | Turns the Linux file into a USB image. |
-| `tools/write-img.ps1` | Writes that image onto the USB on Windows. |
+| `psxitarch.tar.xz` | The compressed Linux file. 2.8 GB (2962027772 bytes). |
+| `kernel.zip` | Kernels and the small boot file. 36.4 MB (38147462 bytes). Unzip it to get `kernel/`. |
+| `payloads.zip` | The files you send to the PS4. 0.2 MB (189240 bytes). Unzip it to get `payloads/`. Use `payloads/linux-1024mb.elf`. |
+| `tools.zip` | Scripts that build and burn the USB, plus checksums. 0.0 MB (5089 bytes). Unzip it to get `tools/`. |
 
 Do not put a file named `bzImage` on the USB. The PS4 would boot that file instead of the kernel that matches the console. One USB then works for both Belize and Baikal.
 
@@ -59,7 +56,7 @@ Burning erases the whole stick.
 
 ### 1. Make the USB image
 
-Download `psxitarch.tar.xz`, `kernel/initramfs.cpio.gz`, and `tools/build-img.sh`. On Linux or Windows WSL:
+Unzip `kernel.zip` and `tools.zip` first. On Linux or Windows WSL, with `psxitarch.tar.xz` in the same folder:
 
 ```bash
 sudo bash tools/build-img.sh psxitarch.tar.xz kernel/initramfs.cpio.gz psxitarch-usb.img
@@ -116,10 +113,10 @@ Belize uses `kernel/bzImage-belize-7.1.7`. Baikal uses `kernel/bzImage-baikal-7.
 
 1. Plug the USB into the PS4 before you turn it on.
 2. Jailbreak.
-3. Send `payload/linux-1024mb.elf` to the loader:
+3. Send `payloads/linux-1024mb.elf` to the loader:
 
 ```bash
-nc -q 1 <PS4-IP> 9020 < payload/linux-1024mb.elf
+nc -q 1 <PS4-IP> 9020 < payloads/linux-1024mb.elf
 ```
 
 If port 9020 does not answer, try 9090. A black screen for a minute or two is normal. It then logs in to the KDE desktop.
