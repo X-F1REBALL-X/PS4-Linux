@@ -39,8 +39,8 @@ Get everything from [Releases](../../releases/latest). Unzip `kernel.zip`, `payl
 |---|---|
 | `psxitarch.tar.xz` | The compressed Linux file. 2.8 GB (2962027772 bytes). |
 | `kernel.zip` | Kernels and the small boot file. 36.4 MB (38147462 bytes). Unzip it to get `kernel/`. |
-| `payloads.zip` | The files you send to the PS4. 0.2 MB (189240 bytes). Unzip it to get `payloads/`. Use `payloads/linux-1024mb.elf`. |
-| `tools.zip` | Scripts that build and burn the USB, plus checksums. 0.0 MB (5089 bytes). Unzip it to get `tools/`. |
+| `payloads.zip` | The files you send to the PS4. 185 KB (189240 bytes). Unzip it to get `payloads/`. Use `payloads/linux-1024mb.elf`. |
+| `tools.zip` | Scripts that build and burn the USB, plus checksums. 5 KB (5089 bytes). Unzip it to get `tools/`. |
 
 Do not put a file named `bzImage` on the USB. The PS4 would boot that file instead of the kernel that matches the console. One USB then works for both Belize and Baikal.
 
