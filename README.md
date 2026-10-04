@@ -89,24 +89,7 @@ Change `1` to your USB number. If Windows asks to format the stick, click Cancel
 
 You can also burn `psxitarch-usb.img` with balenaEtcher, or with Rufus in DD mode.
 
-**Linux**
-
-Find the stick with `lsblk`. Replace `sdX` with that name, not a partition like `sdX1`:
-
-```bash
-sudo dd if=psxitarch-usb.img of=/dev/sdX bs=4M status=progress conv=fsync
-```
-
-### 3. Use the whole stick
-
-The burned Linux partition is only about 12GB. On a 32GB or larger stick, grow it so the free space is usable. Check the name with `lsblk` (here it was `sdb`):
-
-```bash
-sudo parted /dev/sdb resizepart 2 100%
-sudo resize2fs /dev/sdb2
-```
-
-### 4. Put the kernel on the PS4
+### 3. Put the kernel on the PS4
 
 The kernel stays on the console, not on the USB.
 
@@ -118,7 +101,7 @@ The kernel stays on the console, not on the USB.
 
 Belize uses `kernel/bzImage-belize-7.1.7`. Baikal uses `kernel/bzImage-baikal-7.0.8`. If the light stays white for more than 20 seconds, check the table and use the kernel that matches the console. You can also power off, turn the console back on, and try again.
 
-### 5. Boot
+### 4. Boot
 
 1. Plug the USB into the PS4 before you turn it on.
 2. Jailbreak.
@@ -131,6 +114,22 @@ nc -q 1 <PS4-IP> 9020 < payloads/linux-1024mb.elf
 If port 9020 does not answer, try 9090. A black screen for a minute or two is normal. It then logs in to the KDE desktop.
 
 After a reboot you are back on the PS4. Jailbreak and send the payload again. The USB can stay plugged in.
+
+### 5. Use the rest of the USB
+
+Do this only after Linux is running on the PS4, not from the PC. The image is about 12GB. On a larger stick, the space after that stays unused until you grow the Linux partition.
+
+Grow only the partition whose label is `psxitarch`. That is partition 2 of the USB stick. Never touch the console's internal disk.
+
+These commands were not run on the console. They are the usual ones. Run `lsblk -f` and replace `sdX` with the disk that shows the label `psxitarch`, not a partition name like `sdX1`:
+
+```bash
+lsblk -f
+sudo parted /dev/sdX resizepart 2 100%
+sudo resize2fs /dev/sdX2
+```
+
+If parted asks whether to continue because the partition is in use, answer yes. This only grows that USB partition.
 
 ## Payloads
 
