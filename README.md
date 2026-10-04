@@ -8,28 +8,37 @@ This file contains the latest Linux update, dated 29/09/2026.
 
 <p align="center"><img src="images/desktop.jpg" alt="KDE Plasma desktop running on PS4" width="100%"></p>
 
-## Tested consoles
+## Which kernel, and what the light means
 
-| Model | Type | Southbridge | Kernel | Tested FW | Status |
-|---|---|---|---|---|---|
-| CUH-7116B | Pro | Belize | `bzImage-belize-7.1.7` | 13.52 (GoldHEN) | Works |
-| CUH-2116A | Slim | Baikal | `bzImage-baikal-7.0.8` | 13.52 (GoldHEN) | Works |
+After you send the payload, watch the light on the PS4.
 
-Both use the same payload (`linux-1024mb.elf`), initramfs and USB drive. The loader supports FW 5.05-13.52. More consoles will be added.
+If it turns from white to blue within about 15 seconds, the kernel started and Linux is loading.
 
-## Which kernel do I need
+If the light stays white for more than 20 seconds, check that the kernel matches the console using the table below.
 
-| Southbridge | Kernel |
-|---|---|
-| Belize (Slim / Pro) | `bzImage-belize-7.1.7` |
-| Aeolia (Fat) - untested | `bzImage-belize-7.1.7` |
-| Baikal (Slim / Pro) | `bzImage-baikal-7.0.8` |
+If it stays white, you can also power off, turn the console back on, and try again.
 
-- The model number alone does not decide it: Slim (CUH-2xxx) and Pro (CUH-7xxx) can be Belize or Baikal, depending on the motherboard. Fat CUH-10xx/11xx are Aeolia, CUH-12xx and Pro CUH-70xx are Belize.
-- Aeolia (PS4 Fat) should use the Belize kernel but is untested. Some Fat models have Wi-Fi/Bluetooth chips that may not work.
-- Easiest check: if the Belize kernel gets a white light every time, use the Baikal kernel.
-- On the console, the kernel must always be named `/data/linux/boot/bzImage`.
-- Do not put a file named `bzImage` on the USB. The loader prefers a USB kernel over `/data/linux/boot/`, so leave it off and one USB works on every console.
+Only two models are known to work. Everything else in this table is untested.
+
+| Model | Type | Southbridge | Kernel | Status |
+|---|---|---|---|---|
+| CUH-10xx, CUH-11xx | Fat | Aeolia | `bzImage-belize-7.1.7` | Untested |
+| CUH-12xx | Fat | Belize | `bzImage-belize-7.1.7` | Untested |
+| CUH-2116A | Slim | Baikal | `bzImage-baikal-7.0.8` | Works (FW 13.52, GoldHEN) |
+| Other CUH-2xxx | Slim | Depends on the motherboard | Belize: `bzImage-belize-7.1.7`. Baikal: `bzImage-baikal-7.0.8`. | Untested |
+| CUH-70xx | Pro | Belize | `bzImage-belize-7.1.7` | Untested |
+| CUH-7116B | Pro | Belize | `bzImage-belize-7.1.7` | Works (FW 13.52, GoldHEN) |
+| Other CUH-7xxx | Pro | Depends on the motherboard | Belize: `bzImage-belize-7.1.7`. Baikal: `bzImage-baikal-7.0.8`. | Untested |
+
+Fat CUH-10xx and CUH-11xx are Aeolia, so they should use the Belize kernel. That has not been tested. Some Fat models have Wi-Fi and Bluetooth chips that may not work.
+
+Slim CUH-2xxx and Pro CUH-7xxx can be either Belize or Baikal. CUH-70xx is Belize. For the other Slim and Pro models, it depends on the motherboard, so the model number alone is not enough.
+
+Both tested consoles use the same payload (`linux-1024mb.elf`), initramfs and USB drive. The loader supports FW 5.05-13.52.
+
+On the console, the kernel must always be named `/data/linux/boot/bzImage`.
+
+Do not put a file named `bzImage` on the USB. The loader prefers a USB kernel over `/data/linux/boot/`, so leave it off and one USB works on every console.
 
 ## Download
 
@@ -107,7 +116,7 @@ The kernel stays on the console, not on the USB.
 4. Upload the kernel for your console and name it `/data/linux/boot/bzImage`.
 5. Upload `kernel/initramfs.cpio.gz` to `/data/linux/boot/initramfs.cpio.gz`.
 
-Belize uses `kernel/bzImage-belize-7.1.7`. Baikal uses `kernel/bzImage-baikal-7.0.8`. If a Belize kernel only gives a white light, use the Baikal one.
+Belize uses `kernel/bzImage-belize-7.1.7`. Baikal uses `kernel/bzImage-baikal-7.0.8`. If the light stays white for more than 20 seconds, check the table and use the kernel that matches the console. You can also power off, turn the console back on, and try again.
 
 ### 5. Boot
 
@@ -141,9 +150,9 @@ After a reboot you are back on the PS4. Jailbreak and send the payload again. Th
 
 ## Troubleshooting
 
-- **Black screen or white light:** Linux does not always start after the jailbreak. This is normal. Do a full power off (hold the power button), wait a few seconds, jailbreak again and retry. The 2nd or 3rd try usually works.
+- **Black screen:** Linux does not always start after the jailbreak. This is normal. Do a full power off (hold the power button), wait a few seconds, jailbreak again and retry. The 2nd or 3rd try usually works.
 - **Best routine:** plug the USB in before powering on. Send the ELF right after the jailbreak, without opening games or apps. Wait 1-2 minutes on a black screen before giving up.
-- **White light every time:** probably the wrong kernel for your southbridge - try the other one.
+- **White light:** If it turns from white to blue within about 15 seconds, the kernel started and Linux is loading. If it stays white for more than 20 seconds, check that the kernel matches the console using the table. If it stays white, you can also power off, turn the console back on, and try again.
 - **Rescue shell with `mounting LABEL=psxitarch failed`:** the USB was not connected or detected. Plug it in and reboot (resume-boot does not help).
 - **Sleep / suspend is not supported:** already disabled in the ready-made USB image (suspend, screen dimming and screen off are turned off). If you build your own image, disable it in KDE Power Management, or run:
 
