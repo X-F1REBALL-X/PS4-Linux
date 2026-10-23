@@ -10,6 +10,8 @@ Run Linux (Arch Linux with KDE Plasma) on a jailbroken PS4 from a USB drive. Tes
 2. FTP the kernel for your console to `/data/linux/boot/bzImage`, plus `initramfs.cpio.gz`.
 3. Plug in the USB, jailbreak, and send `linux-1024mb.elf` to the loader.
 
+Everything else is in the [guide](https://x-f1reball-x.github.io/PS4-Linux/guide/).
+
 ## Contents
 
 - [Features](#features)
