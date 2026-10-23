@@ -1,12 +1,41 @@
-# PS4 Linux
+<img src="docs/img/banner.png" alt="PS4 Linux">
 
 Run Linux (Arch Linux with KDE Plasma) on a jailbroken PS4 from a USB drive. Tested setup, ready-to-use files.
 
-This file contains the latest Linux update, dated 29/09/2026.
-
-## Screenshot
-
 <p align="center"><img src="images/desktop.jpg" alt="KDE Plasma desktop running on PS4" width="100%"></p>
+
+## Quick start
+
+1. Burn the USB image to a 16GB or larger stick.
+2. FTP the kernel for your console to `/data/linux/boot/bzImage`, plus `initramfs.cpio.gz`.
+3. Plug in the USB, jailbreak, and send `linux-1024mb.elf` to the loader.
+
+## Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Which kernel, and what the light means](#which-kernel-and-what-the-light-means)
+- [Download](#download)
+- [Installation](#installation)
+- [Payloads](#payloads)
+- [After it boots](#after-it-boots)
+- [Troubleshooting](#troubleshooting)
+- [What's new](#whats-new)
+- [License](#license)
+- [Credits](#credits)
+
+## Features
+
+- Arch Linux with KDE Plasma, booted from USB.
+- Kernels for Belize (`bzImage-belize-7.1.7`) and Baikal (`bzImage-baikal-7.0.8`). One USB works on both.
+- Payloads from 32MB to 4096MB VRAM. `linux-1024mb.elf` is the one for the desktop.
+- Works on CUH-7116B (Pro) and CUH-2116A (Slim) on FW 13.52 with GoldHEN. The loader supports FW 5.05-13.52.
+
+## Requirements
+
+- A jailbroken PS4 with GoldHEN (FTP on port `2121` and a payload loader).
+- A USB stick: 32GB USB 3.0 is best, 16GB is the minimum.
+- A Linux or Windows WSL machine to build the image, and Windows or another tool to burn it.
 
 ## Which kernel, and what the light means
 
@@ -53,7 +82,7 @@ Get everything from [Releases](../../releases/latest). Unzip `kernel.zip`, `payl
 
 Do not put a file named `bzImage` on the USB. The PS4 would boot that file instead of the kernel that matches the console. One USB then works for both Belize and Baikal.
 
-## Which USB
+### Which USB
 
 - Best: a 32GB USB 3.0 stick. Fast, and there is room left after Linux is installed.
 - Minimum: 16GB. It fits, but there is almost no free space until you grow the partition.
@@ -61,7 +90,7 @@ Do not put a file named `bzImage` on the USB. The PS4 would boot that file inste
 
 Burning erases the whole stick.
 
-## Install
+## Installation
 
 ### 1. Make the USB image
 
@@ -161,6 +190,14 @@ sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.ta
 
 - **Pasted commands add junk characters:** type them by hand.
 
+## What's new
+
+This file contains the latest Linux update, dated 29/09/2026. See the [releases page](../../releases) for each version.
+
+## License
+
+The `LICENSE` file contains the GNU General Public License, version 3.
+
 ## Credits
 
 - **fail0verflow (marcan, shuffle2)** - original PS4 Linux kernel port and ps4-kexec (the base of the loader)
@@ -175,3 +212,5 @@ sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.ta
 - **SiSTR0** - GoldHEN (jailbreak, FTP server, BinLoader)
 
 Kernels, payloads and initramfs are unmodified and belong to their authors.
+
+Maintained by [X-F1REBALL-X](https://github.com/X-F1REBALL-X).
