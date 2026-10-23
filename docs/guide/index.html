@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PS4 Linux guide</title>
+<meta name="description" content="Run Linux (Arch Linux with KDE Plasma) on a jailbroken PS4 from a USB drive."/>
+<style>
+:root{--bg:#060b1a;--card:#0e1630;--edge:#1f2c52;--ink:#e6edff;--mute:#8a9acb;--pri:#3f8ad5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font:16px/1.6 "Inter","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--pri)}
+.in{max-width:980px;margin:0 auto;padding:0 24px}
+header{border-bottom:1px solid var(--edge);padding:16px 0;position:sticky;top:0;background:rgba(6,11,26,.92);backdrop-filter:blur(6px);z-index:2}
+header .in{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.name{font-size:1.3rem;font-weight:800}
+.ver{color:var(--mute);font-size:.9rem}
+nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem}
+.banner{display:block;width:100%;border-radius:16px;border:1px solid var(--edge);margin:28px 0 8px}
+section{padding:40px 0;border-bottom:1px solid var(--edge)}
+h1{font-size:2rem;line-height:1.25;margin-bottom:12px}
+h2{font-size:1.5rem;margin-bottom:14px}
+h3{font-size:1.1rem;margin:18px 0 8px}
+p{color:var(--mute);margin-bottom:12px}
+.btn{display:inline-block;margin:8px 10px 0 0;padding:10px 18px;border-radius:999px;border:1px solid var(--edge);color:var(--ink);text-decoration:none;font-weight:700}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#04122b}
+ol,ul{margin-left:22px}
+li{margin:8px 0;color:var(--mute)}
+li b,p b,td b{color:var(--ink)}
+code{background:var(--card);border:1px solid var(--edge);border-radius:6px;padding:1px 6px;color:var(--ink);font-size:.9em;word-break:break-word}
+pre{background:var(--card);border:1px solid var(--edge);border-radius:10px;padding:14px;overflow:auto;margin:10px 0 14px}
+pre code{border:0;padding:0;background:none}
+.card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:.95rem}
+th,td{border:1px solid var(--edge);padding:8px 10px;text-align:left;color:var(--mute);vertical-align:top}
+th{background:var(--card);color:var(--ink)}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+figure img{width:100%;border-radius:12px;border:1px solid var(--edge)}
+figcaption{color:var(--mute);margin-top:6px;text-align:center;font-size:.9rem}
+footer{padding:28px 0;color:var(--mute)}
+</style>
+</head>
+<body>
+<header><div class="in">
+<div><div class="name">PS4 Linux</div><div class="ver">v1.0</div></div>
+<nav><a href="#req">Requirements</a><a href="#kernel">Which kernel</a><a href="#install">Install</a><a href="#payloads">Payloads</a><a href="#after">After it boots</a><a href="#help">Troubleshooting</a><a href="#credits">Credits</a></nav>
+</div></header>
+<div class="in"><img class="banner" src="../img/banner.png" alt="PS4 Linux"/></div>
+<section><div class="in">
+<h1>Arch Linux with KDE Plasma on a jailbroken PS4.</h1><p>Run Linux from a USB drive on a jailbroken PS4. Tested setup, ready-to-use files. Works on <b>CUH-7116B</b> (Pro) and <b>CUH-2116A</b> (Slim) on FW 13.52 with GoldHEN. The loader supports FW 5.05-13.52.</p><figure><img src="../img/desktop.jpg" alt="KDE Plasma desktop running on PS4"/></figure>
+<a class="btn pri" href="https://github.com/X-F1REBALL-X/PS4-Linux/releases/latest">Download v1.0</a><a class="btn" href="https://github.com/X-F1REBALL-X/PS4-Linux">Source on GitHub</a>
+</div></section>
+
+<section id="req"><div class="in">
+<h2>Requirements</h2>
+<ul><li>A jailbroken PS4 with GoldHEN (FTP on port <code>2121</code> and a payload loader).</li><li>A USB stick: 32GB USB 3.0 is best, 16GB is the minimum. Writing erases the whole stick.</li></ul>
+</div></section>
+
+<section id="kernel"><div class="in">
+<h2>Which kernel</h2>
+<table><tr><th>Model</th><th>Type</th><th>Southbridge</th><th>Kernel</th><th>Status</th></tr>
+<tr><td>CUH-10xx, CUH-11xx</td><td>Fat</td><td>Aeolia</td><td><code>bzImage-belize-7.1.7</code></td><td>Untested</td></tr>
+<tr><td>CUH-12xx</td><td>Fat</td><td>Belize</td><td><code>bzImage-belize-7.1.7</code></td><td>Untested</td></tr>
+<tr><td>CUH-2116A</td><td>Slim</td><td>Baikal</td><td><code>bzImage-baikal-7.0.8</code></td><td>Works (FW 13.52, GoldHEN)</td></tr>
+<tr><td>Other CUH-2xxx</td><td>Slim</td><td>Depends on the motherboard</td><td>Belize or Baikal</td><td>Untested</td></tr>
+<tr><td>CUH-70xx</td><td>Pro</td><td>Belize</td><td><code>bzImage-belize-7.1.7</code></td><td>Untested</td></tr>
+<tr><td>CUH-7116B</td><td>Pro</td><td>Belize</td><td><code>bzImage-belize-7.1.7</code></td><td>Works (FW 13.52, GoldHEN)</td></tr>
+<tr><td>Other CUH-7xxx</td><td>Pro</td><td>Depends on the motherboard</td><td>Belize or Baikal</td><td>Untested</td></tr></table>
+<p>Not sure? If the Belize kernel gets a white light every time, use the Baikal kernel. Some Fat models have Wi-Fi and Bluetooth chips that may not work.</p>
+</div></section>
+
+<section id="install"><div class="in">
+<h2>Install</h2>
+<h3>1. Write the USB image</h3><ol>
+<li>Download <code>psxitarch-usb.img.xz.part1</code> and <code>psxitarch-usb.img.xz.part2</code> from the release (a ready-made Arch Linux KDE USB image, xz-compressed, split in 2 parts) and <code>write-img.ps1</code>.</li>
+<li>Join the parts. Windows: <pre><code>cmd /c copy /b psxitarch-usb.img.xz.part1 + psxitarch-usb.img.xz.part2 psxitarch-usb.img.xz</code></pre>Linux: <pre><code>cat psxitarch-usb.img.xz.part1 psxitarch-usb.img.xz.part2 &gt; psxitarch-usb.img.xz</code></pre></li>
+<li>In PowerShell as Administrator, run <code>Get-Disk</code> to find the USB number (not your PC disk), then: <pre><code>.\write-img.ps1 -ImagePath .\psxitarch-usb.img.xz -DiskNumber &lt;N&gt;</code></pre>(needs 7-Zip). Or extract the <code>.img</code> with 7-Zip and use balenaEtcher or Rufus (DD mode). If Windows asks to format the stick, click Cancel.</li></ol>
+<h3>2. Put the kernel on the PS4</h3><ol>
+<li>Jailbreak with GoldHEN and FTP to the PS4, port <code>2121</code>.</li>
+<li>Create the folder <code>/data/linux/boot/</code>.</li>
+<li>Upload the kernel for your console and name it <code>/data/linux/boot/bzImage</code>.</li>
+<li>Upload <code>initramfs.cpio.gz</code> to <code>/data/linux/boot/initramfs.cpio.gz</code>.</li></ol>
+<p>Do not put a file named <code>bzImage</code> on the USB: the loader prefers a USB kernel, so leave it off and one USB works on every console.</p>
+<h3>3. Boot</h3><ol>
+<li>Plug the USB into the PS4 before you turn it on.</li><li>Jailbreak.</li>
+<li>Send <code>linux-1024mb.elf</code> to the loader: <pre><code>nc -q 1 &lt;PS4-IP&gt; 9020 &lt; linux-1024mb.elf</code></pre>If port 9020 does not answer, try 9090. A black screen for a minute or two is normal; it then logs in to the KDE desktop.</li></ol>
+<p>After a reboot you are back on the PS4. Jailbreak and send the payload again. The USB can stay plugged in.</p>
+<div class="card"><b>The light:</b> if it turns from white to blue within about 15 seconds, the kernel started. If it stays white for more than 20 seconds, check the kernel table, or power off, turn the console back on, and try again.</div>
+</div></section>
+
+<section id="payloads"><div class="in">
+<h2>Payloads</h2>
+<table><tr><th>File</th><th>VRAM</th><th>Use</th></tr>
+<tr><td><code>linux-32mb.elf</code> to <code>linux-512mb.elf</code></td><td>32-512MB</td><td>No desktop. Server only.</td></tr>
+<tr><td><code>linux-1024mb.elf</code></td><td>1GB</td><td>Use this for the desktop. Tested on Pro and Slim.</td></tr>
+<tr><td><code>linux-2048mb.elf</code></td><td>2GB</td><td>More graphics memory.</td></tr>
+<tr><td><code>linux-3072mb.elf</code></td><td>3GB</td><td>Not tested.</td></tr>
+<tr><td><code>linux-4096mb.elf</code></td><td>4GB</td><td>Tested on Pro (FW 13.52). Leaves about 4GB RAM.</td></tr></table>
+</div></section>
+
+<section id="after"><div class="in">
+<h2>After it boots</h2>
+<ul><li>The controller works on a USB cable. Bluetooth has to be paired again after every boot.</li>
+<li>Ethernet works. Wi-Fi is still being tested. Prefer 2.4GHz.</li><li>Sleep is turned off. Suspending the console breaks this Linux.</li></ul>
+<h3>Use the rest of the USB</h3><p>Only from Linux running on the PS4. Grow only the partition labeled <code>psxitarch</code> (partition 2 of the USB stick); never touch the console's internal disk. These are the usual commands (not run on the console):</p>
+<pre><code>lsblk -f
+sudo parted /dev/sdX resizepart 2 100%
+sudo resize2fs /dev/sdX2</code></pre>
+</div></section>
+
+<section id="help"><div class="in">
+<h2>Troubleshooting</h2>
+<ul><li><b>Black screen:</b> do a full power off, wait a few seconds, jailbreak again and retry. The 2nd or 3rd try usually works.</li>
+<li><b>Best routine:</b> plug the USB in before powering on, send the ELF right after the jailbreak without opening games or apps, and wait 1-2 minutes.</li>
+<li><b>Rescue shell with <code>mounting LABEL=psxitarch failed</code>:</b> the USB was not detected. Plug it in and reboot.</li>
+<li><b>Pasted commands add junk characters:</b> type them by hand.</li></ul>
+</div></section>
+
+<section id="credits"><div class="in">
+<h2>Credits</h2>
+<p>fail0verflow (original PS4 Linux port, ps4-kexec), rancido and PSXITA Team, eeply, valeryy, tihmstar, mircoho, codedwrench, crashniels (kernel patches), rmuxnet (Strawberry kernels, loader rework), ps4boot (original loader), ArabPixel (ps4-linux-loader, FW 12.5x/13.xx), PSXITA Team (Psxitarch v3 initramfs), Piotr Karbowski (better-initramfs), Erkkola (Arch KDE rootfs), centi07 and DionKill (Mesa packages), SiSTR0 (GoldHEN). Kernels, payloads and initramfs are unmodified and belong to their authors.</p>
+</div></section>
+
+<footer><div class="in">Developed by <a href="https://github.com/X-F1REBALL-X">X-F1REBALL-X</a>. Source: <a href="https://github.com/X-F1REBALL-X/PS4-Linux">github.com/X-F1REBALL-X/PS4-Linux</a>.</div></footer>
+</body>
+</html>
